@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════
-   SARUNG ENDE — Tahap 5: Logika halaman login/daftar
+   SARUNG ENDE — Tahap 9A: Logika halaman login/daftar (Firebase)
 ================================================================ */
 
 const params = new URLSearchParams(location.search);
@@ -27,27 +27,35 @@ function pilihPeran(r, el) {
   el.classList.add('chip-active');
 }
 
-/* ── Submit masuk ── */
-function submitMasuk(e) {
+/* ── Submit masuk (Terhubung ke Firebase) ── */
+async function submitMasuk(e) {
   e.preventDefault();
   const email = document.getElementById('m-email').value.trim();
   const pass  = document.getElementById('m-pass').value;
-  const hasil = loginUser(email, pass);
-  if (!hasil.ok) { showToast('⚠️ ' + hasil.pesan); return; }
+  
+  showToast('⏳ Sedang memproses...');
+  const hasil = await loginUser(email, pass);
+  
+  if (!hasil.ok) { 
+    showToast('⚠️ ' + hasil.pesan); 
+    return; 
+  }
 
-  showToast('👋 Selamat datang, ' + hasil.sesi.nama + '!');
-    setTimeout(() => {
-    /* Arahkan penjual ke dashboard, pembeli ke beranda */
-    if (hasil.sesi.peran === 'penjual') {
+  showToast('👋 Login berhasil! Mengalihkan...');
+  
+  // Tunggu sebentar agar onAuthStateChanged di auth.js sempat membaca data peran dari Firestore
+  setTimeout(() => {
+    const user = currentUser();
+    if (user && user.peran === 'penjual') {
       location.href = 'dashboard.html';
     } else {
       location.href = 'index.html';
     }
-  }, 700);
+  }, 1000);
 }
 
-/* ── Submit daftar ── */
-function submitDaftar(e) {
+/* ── Submit daftar (Terhubung ke Firebase) ── */
+async function submitDaftar(e) {
   e.preventDefault();
   const nama  = document.getElementById('d-nama').value.trim();
   const email = document.getElementById('d-email').value.trim();
@@ -55,21 +63,43 @@ function submitDaftar(e) {
 
   if (pass.length < 6) { showToast('⚠️ Kata sandi minimal 6 karakter.'); return; }
 
-  const hasil = daftarUser({ nama, email, pass, peran: peranTerpilih });
-  if (!hasil.ok) { showToast('⚠️ ' + hasil.pesan); return; }
+  showToast('⏳ Mendaftarkan akun ke server...');
+  const hasil = await daftarUser({ nama, email, pass, peran: peranTerpilih });
+  
+  if (!hasil.ok) { 
+    showToast('⚠️ ' + hasil.pesan); 
+    return; 
+  }
 
-  showToast('✅ Pendaftaran berhasil! Silakan masuk.');
-  gantiMode('masuk');
-  document.getElementById('m-email').value = email;
-  document.getElementById('m-pass').value  = '';
+  showToast('✅ Pendaftaran berhasil! Anda otomatis masuk.');
+  
+  setTimeout(() => {
+    const user = currentUser();
+    if (user && user.peran === 'penjual') {
+      location.href = 'dashboard.html';
+    } else {
+      location.href = 'index.html';
+    }
+  }, 1500);
 }
 
-/* ── Isi otomatis akun demo ── */
+/* ── Isi otomatis data dummy ── */
 function isiDemo(peran) {
-  gantiMode('masuk');
-  document.getElementById('m-email').value = peran === 'penjual' ? 'demo@penjual.id' : 'demo@pembeli.id';
-  document.getElementById('m-pass').value  = peran === 'penjual' ? 'penjual123' : 'pembeli123';
-  showToast('✍️ Akun demo terisi — klik Masuk.');
+  // Karena kita kini memakai Firebase, akun demo lokal tidak bisa langsung login.
+  // Fungsi ini sekarang mengisi form DAFTAR agar Anda bisa cepat membuat akun tes di Firebase.
+  gantiMode('daftar');
+  peranTerpilih = peran;
+
+  // Update UI chip peran
+  document.querySelectorAll('.peran-chip').forEach(c => c.classList.remove('chip-active'));
+  const targetChip = document.querySelector(`.peran-chip[onclick*="'${peran}'"]`);
+  if (targetChip) targetChip.classList.add('chip-active');
+
+  document.getElementById('d-nama').value  = peran === 'penjual' ? 'Admin Sarung Ende' : 'Budi Pembeli';
+  document.getElementById('d-email').value = peran === 'penjual' ? 'admin@sarungende.id' : 'budi.pembeli@test.com';
+  document.getElementById('d-pass').value  = 'admin123';
+
+  showToast('✍️ Data terisi. Klik "Daftar Sekarang" untuk membuat akun di server Firebase.');
 }
 
 /* ── Inisialisasi ── */

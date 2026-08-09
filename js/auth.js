@@ -1,66 +1,100 @@
 /* ════════════════════════════════════════════════════════════
-   SARUNG ENDE — Tahap 5: Autentikasi pembeli & penjual (simulasi)
-   Pola fungsi (daftar/login/logout/sesi) dibuat sama dengan
-   Firebase Auth, sehingga di Tahap 9 hanya isi fungsi yang diganti.
-   ⚠️ Hash di bawah HANYA simulasi, bukan keamanan produksi.
+   SARUNG ENDE — Tahap 9A: Autentikasi Firebase Asli
 ================================================================ */
 
-const USERS_KEY   = 'sarung-ende-users';
-const SESSION_KEY = 'sarung-ende-session';
+let currentUserData = null;
 
-function bacaUsers()  { try { return JSON.parse(localStorage.getItem(USERS_KEY)) || []; } catch (e) { return []; } }
-function simpanUsers(u) { localStorage.setItem(USERS_KEY, JSON.stringify(u)); }
+/* ── Pantau Status Login Secara Realtime ── */
+auth.onAuthStateChanged(async (user) => {
+  if (user) {
+    // Ambil data peran & nama dari Firestore
+    try {
+      const doc = await db.collection("users").doc(user.uid).get();
+      if (doc.exists) {
+        currentUserData = { uid: user.uid, email: user.email, ...doc.data() };
+      } else {
+        currentUserData = { uid: user.uid, email: user.email, nama: 'User', peran: 'pembeli' };
+      }
+    } catch (error) {
+      console.error("Error mengambil data user:", error);
+      currentUserData = { uid: user.uid, email: user.email, nama: 'User', peran: 'pembeli' };
+    }
+  } else {
+    currentUserData = null;
+  }
+  renderAuthHeader(); // Update tampilan header
+});
 
-/* Hash simulasi (akan diganti Firebase Auth di Tahap 9) */
-function hashKasar(s) {
-  let h = 0;
-  for (let i = 0; i < s.length; i++) { h = (h << 5) - h + s.charCodeAt(i); h |= 0; }
-  return 'h' + h;
+/* ── Fungsi untuk halaman lain (dashboard, dll) ── */
+function currentUser() {
+  return currentUserData;
 }
 
-/* ── Registrasi ── */
-function daftarUser({ nama, email, pass, peran }) {
-  const users = bacaUsers();
-  if (users.find(u => u.email === email)) return { ok: false, pesan: 'Email sudah terdaftar. Silakan masuk.' };
-  users.push({ nama, email, pass: hashKasar(pass), peran });
-  simpanUsers(users);
-  return { ok: true };
+/* ── Registrasi (Daftar) ── */
+async function daftarUser({ nama, email, pass, peran }) {
+  try {
+    const userCredential = await auth.createUserWithEmailAndPassword(email, pass);
+    const user = userCredential.user;
+    
+    // Simpan nama & peran ke Firestore
+    await db.collection("users").doc(user.uid).set({
+      nama: nama,
+      peran: peran,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    
+    return { ok: true };
+  } catch (error) {
+    let pesan = 'Terjadi kesalahan saat mendaftar.';
+    if (error.code === 'auth/email-already-in-use') pesan = 'Email sudah terdaftar. Silakan masuk.';
+    if (error.code === 'auth/weak-password') pesan = 'Kata sandi terlalu lemah (min. 6 karakter).';
+    return { ok: false, pesan: pesan };
+  }
 }
 
 /* ── Login ── */
-function loginUser(email, pass) {
-  const u = bacaUsers().find(u => u.email === email && u.pass === hashKasar(pass));
-  if (!u) return { ok: false, pesan: 'Email atau kata sandi salah.' };
-  const sesi = { nama: u.nama, email: u.email, peran: u.peran };
-  localStorage.setItem(SESSION_KEY, JSON.stringify(sesi));
-  return { ok: true, sesi };
+async function loginUser(email, pass) {
+  try {
+    await auth.signInWithEmailAndPassword(email, pass);
+    return { ok: true };
+  } catch (error) {
+    let pesan = 'Email atau kata sandi salah.';
+    if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-login-credentials') {
+      pesan = 'Email atau kata sandi salah.';
+    }
+    return { ok: false, pesan: pesan };
+  }
 }
 
-/* ── Sesi & logout ── */
-function currentUser() {
-  try { return JSON.parse(localStorage.getItem(SESSION_KEY)); } catch (e) { return null; }
+/* ── Logout ─ */
+async function logout() {
+  try {
+    await auth.signOut();
+    showToast('👋 Anda telah keluar.');
+    // Jika sedang di halaman proteksi, lempar ke beranda
+    if (window.location.pathname.includes('dashboard') || window.location.pathname.includes('pesanan') || window.location.pathname.includes('tambah-produk')) {
+      setTimeout(() => location.href = 'index.html', 500);
+    }
+  } catch (error) {
+    console.error("Error logout:", error);
+  }
 }
 
-function logout() {
-  localStorage.removeItem(SESSION_KEY);
-  renderAuthHeader();
-  showToast('👋 Anda telah keluar.');
-}
-
-/* ── Area akun di header (dirender setelah header dimuat) ── */
+/* ── Area Akun di Header ── */
 function renderAuthHeader() {
   const area = document.getElementById('auth-area');
   if (!area) return;
-  const u = currentUser();
 
-  if (!u) {
+  if (!currentUserData) {
     area.innerHTML = `
       <button onclick="location.href='login.html'"
               class="text-sm font-bold border-2 border-laut text-laut rounded-full px-4 py-2 hover:bg-laut hover:text-ivory transition">Masuk</button>`;
     return;
   }
 
+  const u = currentUserData;
   const ikon = u.peran === 'penjual' ? 'fa-store' : 'fa-user';
+  
   area.innerHTML = `
     <div class="flex items-center gap-2">
       <span class="hidden md:flex items-center gap-2 text-xs font-bold bg-laut/10 text-laut rounded-full px-3 py-1.5">
@@ -68,7 +102,7 @@ function renderAuthHeader() {
         <span class="uppercase text-[9px] bg-emas text-white rounded-full px-2 py-0.5">${u.peran}</span>
       </span>
       ${u.peran === 'penjual'
-        ? `<button onclick="showToast('📊 Dasbor penjual aktif di Tahap 6')" class="text-xs font-bold bg-emas text-white rounded-full px-3 py-2 hover:bg-emas-dark transition">Dasbor</button>`
+        ? `<button onclick="location.href='dashboard.html'" class="text-xs font-bold bg-emas text-white rounded-full px-3 py-2 hover:bg-emas-dark transition">Dasbor</button>`
         : ''}
       <button onclick="logout()" title="Keluar"
               class="h-10 w-10 rounded-full border border-cocoa/15 bg-white text-mengkudu hover:border-mengkudu transition">
@@ -76,14 +110,3 @@ function renderAuthHeader() {
       </button>
     </div>`;
 }
-
-/* ── Akun demo untuk pengujian ── */
-function seedDemo() {
-  const users = bacaUsers();
-  if (!users.find(u => u.email === 'demo@penjual.id'))
-    users.push({ nama: 'Penjual Demo', email: 'demo@penjual.id', pass: hashKasar('penjual123'), peran: 'penjual' });
-  if (!users.find(u => u.email === 'demo@pembeli.id'))
-    users.push({ nama: 'Pembeli Demo', email: 'demo@pembeli.id', pass: hashKasar('pembeli123'), peran: 'pembeli' });
-  simpanUsers(users);
-}
-seedDemo();
