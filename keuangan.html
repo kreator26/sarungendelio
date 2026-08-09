@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Keuangan — Sarung Ende</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="js/tailwind-config.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="bg-sand/30 font-sans text-cocoa min-h-screen flex flex-col md:flex-row">
+
+<!-- SIDEBAR -->
+<aside class="w-full md:w-64 bg-laut-deep text-ivory shrink-0 md:min-h-screen flex flex-col">
+  <div class="p-6 border-b border-ivory/10 flex items-center gap-3">
+    <span class="h-9 w-9 rounded-lg bg-emas flex items-center justify-center rotate-45"><span class="h-3 w-3 rounded-sm bg-laut-deep"></span></span>
+    <div class="leading-tight">
+      <span class="block font-serif text-lg font-bold">Sarung Ende</span>
+      <span class="block text-[10px] font-extrabold tracking-widest text-emas uppercase">Seller Panel</span>
+    </div>
+  </div>
+
+  <nav class="flex-1 p-4 space-y-1 text-sm font-semibold">
+    <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-ivory/10 transition"><i class="fa-solid fa-chart-pie w-5"></i> Ringkasan</a>
+    <a href="dashboard.html#sec-produk" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-ivory/10 transition"><i class="fa-solid fa-boxes-stacked w-5"></i> Produk Saya</a>
+    <a href="pesanan.html" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-ivory/10 transition"><i class="fa-solid fa-receipt w-5"></i> Pesanan</a>
+    <a href="keuangan.html" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-emas text-laut-deep"><i class="fa-solid fa-wallet w-5"></i> Keuangan</a>
+    <a href="statistik.html" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-ivory/10 transition"><i class="fa-solid fa-chart-line w-5"></i> Statistik Pengunjung</a>
+    <a href="index.html" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-ivory/10 transition mt-8 border border-ivory/20"><i class="fa-solid fa-store w-5"></i> Lihat Toko</a>
+  </nav>
+
+  <div class="p-4 border-t border-ivory/10 text-xs">
+    <div class="flex items-center gap-3 mb-3">
+      <div id="user-avatar" class="h-8 w-8 rounded-full bg-emas text-laut-deep flex items-center justify-center font-bold">P</div>
+      <div class="min-w-0">
+        <p id="user-name" class="font-bold truncate">Penjual</p>
+        <p id="user-email" class="text-ivory/50 truncate">email@seller.com</p>
+      </div>
+    </div>
+    <button onclick="logout(); location.href='index.html'" class="w-full text-center py-2 rounded-lg bg-mengkudu/20 text-mengkudu-light hover:bg-mengkudu hover:text-ivory transition font-bold">
+      <i class="fa-solid fa-right-from-bracket mr-1"></i> Keluar
+    </button>
+  </div>
+</aside>
+
+<!-- KONTEN -->
+<main class="flex-1 p-6 md:p-10 overflow-y-auto">
+
+  <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+    <div>
+      <h1 class="font-serif text-3xl font-bold text-laut-deep">Keuangan Toko</h1>
+      <p class="text-sm text-cocoa/60">Pemasukan cair dari pesanan selesai · dana tertahan dari pesanan berjalan.</p>
+    </div>
+    <button onclick="tarikSaldo()" class="bg-emas text-white font-bold px-5 py-2.5 rounded-full hover:bg-emas-dark transition shadow-card text-sm">
+      <i class="fa-solid fa-money-bill-transfer mr-2"></i> Tarik Saldo
+    </button>
+  </div>
+
+  <!-- Kartu Saldo -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+    <div class="bg-laut-deep p-5 rounded-2xl shadow-card text-ivory relative overflow-hidden">
+      <div class="absolute -right-4 -top-4 opacity-10 text-6xl"><i class="fa-solid fa-wallet"></i></div>
+      <p class="text-xs font-bold text-ivory/70 uppercase tracking-wider">Saldo Tersedia</p>
+      <p id="saldo-tersedia" class="text-2xl font-extrabold text-emas-light mt-1">Rp 0</p>
+      <p class="text-xs text-ivory/60 mt-2">Siap ditarik ke rekening</p>
+    </div>
+    <div class="bg-white p-5 rounded-2xl shadow-card border-l-4 border-emas">
+      <p class="text-xs font-bold text-cocoa/50 uppercase tracking-wider">Dana Tertahan</p>
+      <p id="saldo-tertahan" class="text-2xl font-extrabold text-laut-deep mt-1">Rp 0</p>
+      <p class="text-xs text-cocoa/60 mt-2">Pesanan belum selesai</p>
+    </div>
+    <div class="bg-white p-5 rounded-2xl shadow-card border-l-4 border-green-600">
+      <p class="text-xs font-bold text-cocoa/50 uppercase tracking-wider">Total Pemasukan</p>
+      <p id="total-masuk" class="text-2xl font-extrabold text-laut-deep mt-1">Rp 0</p>
+      <p class="text-xs text-cocoa/60 mt-2">Dari pesanan selesai</p>
+    </div>
+    <div class="bg-white p-5 rounded-2xl shadow-card border-l-4 border-mengkudu">
+      <p class="text-xs font-bold text-cocoa/50 uppercase tracking-wider">Total Ditarik</p>
+      <p id="total-wd" class="text-2xl font-extrabold text-laut-deep mt-1">Rp 0</p>
+      <p class="text-xs text-cocoa/60 mt-2">Riwayat pencairan</p>
+    </div>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-6">
+    <!-- Riwayat Pemasukan -->
+    <div class="bg-white p-6 rounded-2xl shadow-card overflow-x-auto">
+      <h3 class="font-bold mb-4"><i class="fa-solid fa-arrow-down text-green-600 mr-1"></i> Riwayat Pemasukan (Pesanan Selesai)</h3>
+      <table class="w-full text-sm text-left min-w-[380px]">
+        <thead class="text-xs text-cocoa/60 uppercase bg-sand/50">
+          <tr><th class="px-3 py-2">Invoice</th><th class="px-3 py-2">Pembeli</th><th class="px-3 py-2 text-right">Jumlah</th></tr>
+        </thead>
+        <tbody id="tabel-masuk"></tbody>
+      </table>
+    </div>
+
+    <!-- Riwayat Penarikan -->
+    <div class="bg-white p-6 rounded-2xl shadow-card overflow-x-auto">
+      <h3 class="font-bold mb-4"><i class="fa-solid fa-money-bill-transfer text-emas mr-1"></i> Riwayat Penarikan Saldo</h3>
+      <table class="w-full text-sm text-left min-w-[380px]">
+        <thead class="text-xs text-cocoa/60 uppercase bg-sand/50">
+          <tr><th class="px-3 py-2">ID</th><th class="px-3 py-2">Rekening</th><th class="px-3 py-2 text-right">Jumlah</th><th class="px-3 py-2 text-right">Status</th></tr>
+        </thead>
+        <tbody id="tabel-wd"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Dana Tertahan -->
+  <div class="bg-white p-6 rounded-2xl shadow-card mt-6 overflow-x-auto">
+    <h3 class="font-bold mb-4"><i class="fa-solid fa-hourglass-half text-emas mr-1"></i> Dana Tertahan (Pesanan Berjalan)</h3>
+    <table class="w-full text-sm text-left min-w-[480px]">
+      <thead class="text-xs text-cocoa/60 uppercase bg-sand/50">
+        <tr><th class="px-3 py-2">Invoice</th><th class="px-3 py-2">Pembeli</th><th class="px-3 py-2">Status</th><th class="px-3 py-2 text-right">Nilai</th></tr>
+      </thead>
+      <tbody id="tabel-tertahan"></tbody>
+    </table>
+    <p class="text-[11px] text-cocoa/45 mt-4">💡 Dana otomatis pindah ke <b>Saldo Tersedia</b> begitu pesanan ditandai <b>Selesai</b> di halaman Pesanan.</p>
+  </div>
+
+</main>
+
+<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 z-[70]
+     bg-laut-deep text-ivory text-sm font-bold px-6 py-3 rounded-full shadow-card pointer-events-none"></div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+<script src="js/firebase-config.js"></script>
+<script src="js/analytics.js"></script>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/keuangan.js"></script>
+</body>
+</html>
