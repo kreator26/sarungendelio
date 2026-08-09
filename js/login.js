@@ -83,6 +83,30 @@ async function submitDaftar(e) {
   }, 1500);
 }
 
+/* ── Reset kata sandi via email (Firebase) ── */
+async function resetPassword() {
+  const email = document.getElementById('m-email').value.trim();
+
+  if (!email) {
+    showToast('⚠️ Isi email Anda terlebih dahulu di kolom email.');
+    document.getElementById('m-email').focus();
+    return;
+  }
+
+  showToast('⏳ Mengirim tautan reset…');
+  try {
+    auth.languageCode = 'id'; // agar email reset berbahasa Indonesia
+    await auth.sendPasswordResetEmail(email);
+    showToast('📧 Tautan reset terkirim ke ' + email + '. Cek inbox / folder spam.');
+  } catch (error) {
+    let pesan = 'Gagal mengirim tautan reset.';
+    if (error.code === 'auth/user-not-found') pesan = 'Email tidak terdaftar.';
+    if (error.code === 'auth/invalid-email')  pesan = 'Format email tidak valid.';
+    if (error.code === 'auth/too-many-requests') pesan = 'Terlalu banyak percobaan. Coba lagi nanti.';
+    showToast('⚠️ ' + pesan);
+  }
+}
+
 /* ── Isi otomatis data dummy ── */
 function isiDemo(peran) {
   // Karena kita kini memakai Firebase, akun demo lokal tidak bisa langsung login.

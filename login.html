@@ -38,7 +38,7 @@
       <ul class="mt-6 space-y-3 text-sm text-ivory/80">
         <li><i class="fa-solid fa-bag-shopping text-emas mr-2"></i><b>Pembeli:</b> checkout lebih cepat & riwayat pesanan.</li>
         <li><i class="fa-solid fa-store text-emas mr-2"></i><b>Penjual:</b> dasbor produk, pesanan, saldo, & pengiriman.</li>
-        <li><i class="fa-solid fa-shield-halved text-emas mr-2"></i>Sesi tersimpan aman di perangkat Anda.</li>
+        <li><i class="fa-solid fa-shield-halved text-emas mr-2"></i>Sesi tersimpan aman di server cloud Firebase.</li>
       </ul>
       <p class="mt-8 text-[11px] text-ivory/50">Autentikasi penuh via Firebase Auth aktif pada Tahap 9.</p>
     </div>
@@ -63,6 +63,14 @@
           <input id="m-pass" type="password" required placeholder="••••••••"
                  class="mt-1 w-full rounded-xl border border-cocoa/15 bg-white px-4 py-3 text-sm outline-none focus:border-emas">
         </div>
+
+        <!-- TOMBOL RESET PASSWORD (BARU) -->
+        <div class="text-right -mt-2">
+          <button type="button" onclick="resetPassword()" class="text-xs font-bold text-laut hover:underline">
+            <i class="fa-solid fa-key mr-1"></i>Lupa kata sandi?
+          </button>
+        </div>
+
         <button class="w-full rounded-full bg-laut text-ivory font-bold py-3.5 hover:bg-laut-dark transition shadow-card">Masuk</button>
         <p class="text-xs text-cocoa/55 text-center">Belum punya akun?
           <button type="button" onclick="gantiMode('daftar')" class="font-bold text-mengkudu hover:underline">Daftar di sini</button></p>
