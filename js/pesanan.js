@@ -1,6 +1,6 @@
 /* ════════════════════════════════════════════════════════════
    SARUNG ENDE — Tahap 8: Mesin Pesanan & Halaman Kelola
-   [TAHAP 9] Pesanan akan disinkronkan ke Firestore
+   (Updated: WaitForAuth untuk stabilitas Firebase)
 ================================================================ */
 
 const ORDERS_KEY = 'sarung-ende-orders';
@@ -37,19 +37,6 @@ function formatTanggal(iso) {
   return d.toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' });
 }
 
-/* ── Proteksi halaman ── */
-const user = currentUser();
-if (!user || user.peran !== 'penjual') {
-  alert('⛔ Akses Ditolak. Halaman ini khusus untuk Penjual.');
-  location.href = 'login.html?mode=masuk';
-} else {
-  document.getElementById('user-name').textContent  = user.nama;
-  document.getElementById('user-email').textContent = user.email;
-  document.getElementById('user-avatar').textContent = user.nama.charAt(0).toUpperCase();
-}
-
-seedOrders();
-
 /* ── State filter ── */
 let filterStatus = 'semua';
 let filterQ = '';
@@ -81,6 +68,7 @@ function updateCounts() {
 function renderList() {
   const list   = document.getElementById('list-pesanan-full');
   const kosong = document.getElementById('pesanan-kosong');
+  if (!list) return;
   const data   = applyFilter(orders);
 
   if (!data.length) {
@@ -259,25 +247,49 @@ function tambahPesananManual() {
   showToast('✅ Pesanan baru ' + id + ' ditambahkan.');
 }
 
-/* ── Event listener ── */
-document.querySelectorAll('.filter-status').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.filter-status').forEach(b => b.classList.remove('chip-active'));
-    btn.classList.add('chip-active');
-    filterStatus = btn.dataset.status;
-    renderList();
-  });
-});
+/* ═══════════ INISIALISASI DENGAN WAITFORAUTH ═══════════ */
+waitForAuth(() => {
+  const user = currentUser();
+  
+  /* ── Proteksi halaman ── */
+  if (!user || user.peran !== 'penjual') {
+    alert('⛔ Akses Ditolak. Halaman ini khusus untuk Penjual.');
+    location.href = 'login.html?mode=masuk';
+    return;
+  }
+  
+  /* ── Isi data user di sidebar ── */
+  document.getElementById('user-name').textContent  = user.nama;
+  document.getElementById('user-email').textContent = user.email;
+  document.getElementById('user-avatar').textContent = user.nama.charAt(0).toUpperCase();
 
-document.getElementById('cari-pesanan').addEventListener('input', e => {
-  filterQ = e.target.value.trim();
+  /* ── Inisialisasi data pesanan ── */
+  seedOrders();
+  updateCounts();
   renderList();
-});
 
-document.getElementById('modal-detail').addEventListener('click', e => {
-  if (e.target.id === 'modal-detail') tutupModal();
-});
+  /* ── Event listener (di dalam waitForAuth agar DOM sudah siap) ── */
+  document.querySelectorAll('.filter-status').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-status').forEach(b => b.classList.remove('chip-active'));
+      btn.classList.add('chip-active');
+      filterStatus = btn.dataset.status;
+      renderList();
+    });
+  });
 
-/* ── Inisialisasi ── */
-updateCounts();
-renderList();
+  const searchInput = document.getElementById('cari-pesanan');
+  if (searchInput) {
+    searchInput.addEventListener('input', e => {
+      filterQ = e.target.value.trim();
+      renderList();
+    });
+  }
+
+  const modalDetail = document.getElementById('modal-detail');
+  if (modalDetail) {
+    modalDetail.addEventListener('click', e => {
+      if (e.target.id === 'modal-detail') tutupModal();
+    });
+  }
+});
