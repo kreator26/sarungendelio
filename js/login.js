@@ -36,9 +36,13 @@ function submitMasuk(e) {
   if (!hasil.ok) { showToast('⚠️ ' + hasil.pesan); return; }
 
   showToast('👋 Selamat datang, ' + hasil.sesi.nama + '!');
-  setTimeout(() => {
-    /* Penjual akan diarahkan ke dashboard.html mulai Tahap 6 */
-    location.href = 'index.html';
+    setTimeout(() => {
+    /* Arahkan penjual ke dashboard, pembeli ke beranda */
+    if (hasil.sesi.peran === 'penjual') {
+      location.href = 'dashboard.html';
+    } else {
+      location.href = 'index.html';
+    }
   }, 700);
 }
 
