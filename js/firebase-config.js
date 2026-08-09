@@ -1,6 +1,5 @@
 /* ════════════════════════════════════════════════════════════
    SARUNG ENDE — Konfigurasi Firebase
-   PASTE konfigurasi dari Firebase Console Anda di bawah ini
 ================================================================ */
 
 const firebaseConfig = {
@@ -16,7 +15,6 @@ const firebaseConfig = {
 // Inisialisasi Firebase
 firebase.initializeApp(firebaseConfig);
 
-// Inisialisasi Layanan
+// Inisialisasi Layanan (Storage dihapus sementara, akan dipakai di Tahap 9C)
 const auth = firebase.auth();
 const db = firebase.firestore();
-const storage = firebase.storage(); // Disiapkan untuk Tahap 9C (Upload Foto)
