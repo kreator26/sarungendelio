@@ -128,3 +128,10 @@ function isiDemo(peran) {
 
 /* ── Inisialisasi ── */
 gantiMode(mode);
+
+/* Jika URL membawa peran (mis. dari tombol "Jadi Penjual"), aktifkan chip-nya */
+if (peranTerpilih !== 'pembeli') {
+  document.querySelectorAll('.peran-chip').forEach(c => c.classList.remove('chip-active'));
+  const chip = document.querySelector(`.peran-chip[onclick*="'${peranTerpilih}'"]`);
+  if (chip) chip.classList.add('chip-active');
+}
