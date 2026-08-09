@@ -1,26 +1,15 @@
-const user = currentUser();
-if (!user || user.peran !== 'penjual') {
-  alert('⛔ Akses Ditolak. Halaman ini khusus untuk Penjual.');
-  location.href = 'login.html?mode=masuk';
-}
+/* ════════════════════════════════════════════════════════════
+   SARUNG ENDE — Tahap 7: Form Tambah/Edit Produk
+   (Updated: WaitForAuth untuk stabilitas Firebase)
+================================================================ */
 
 const params = new URLSearchParams(location.search);
 const editId = params.get('id') ? parseInt(params.get('id')) : null;
-const produk = editId ? PRODUCTS.find(p => p.id === editId) : null;
+
 let imgBase64 = '';
+let produk = null;
 
-if (produk) {
-  document.getElementById('form-title').textContent = 'Edit Produk';
-  document.getElementById('p-nama').value = produk.nama;
-  document.getElementById('p-kat').value = produk.kat;
-  document.getElementById('p-motif').value = produk.motifKey;
-  document.getElementById('p-harga').value = produk.harga;
-  document.getElementById('p-badge').value = produk.badge || '';
-  imgBase64 = produk.img;
-  document.getElementById('preview-img').src = imgBase64;
-  document.getElementById('preview-img').classList.remove('hidden');
-}
-
+/* ── Event listener untuk upload gambar (tidak perlu waitForAuth) ── */
 document.getElementById('input-file').addEventListener('change', function(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -33,6 +22,7 @@ document.getElementById('input-file').addEventListener('change', function(e) {
   reader.readAsDataURL(file);
 });
 
+/* ── Fungsi submit produk ── */
 function submitProduk(e) {
   e.preventDefault();
   const nama = document.getElementById('p-nama').value.trim();
@@ -58,3 +48,31 @@ function submitProduk(e) {
   showToast(editId ? '✅ Produk berhasil diperbarui!' : '✅ Produk baru berhasil ditambahkan!');
   setTimeout(() => location.href = 'dashboard.html', 800);
 }
+
+/* ═══════════ INISIALISASI DENGAN WAITFORAUTH ═══════════ */
+waitForAuth(() => {
+  const user = currentUser();
+  
+  /* ── Proteksi halaman: Hanya untuk Penjual ── */
+  if (!user || user.peran !== 'penjual') {
+    alert('⛔ Akses Ditolak. Halaman ini khusus untuk Penjual.');
+    location.href = 'login.html?mode=masuk';
+    return;
+  }
+
+  /* ── Jika mode edit, isi form dengan data produk ── */
+  if (editId) {
+    produk = PRODUCTS.find(p => p.id === editId);
+    if (produk) {
+      document.getElementById('form-title').textContent = 'Edit Produk';
+      document.getElementById('p-nama').value = produk.nama;
+      document.getElementById('p-kat').value = produk.kat;
+      document.getElementById('p-motif').value = produk.motifKey;
+      document.getElementById('p-harga').value = produk.harga;
+      document.getElementById('p-badge').value = produk.badge || '';
+      imgBase64 = produk.img;
+      document.getElementById('preview-img').src = imgBase64;
+      document.getElementById('preview-img').classList.remove('hidden');
+    }
+  }
+});
