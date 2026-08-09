@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Masuk atau daftar sebagai pembeli & penjual Sarung Ende.">
+<title>Masuk / Daftar — Sarung Ende</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="js/tailwind-config.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="bg-ivory font-sans text-cocoa min-h-screen flex flex-col">
+
+<!-- Toast (halaman ini tidak memuat footer partial) -->
+<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 z-[70]
+     bg-laut-deep text-ivory text-sm font-bold px-6 py-3 rounded-full shadow-card pointer-events-none"></div>
+
+<!-- Bar atas -->
+<div class="max-w-6xl w-full mx-auto px-4 py-6 flex items-center justify-between">
+  <a href="index.html" class="flex items-center gap-3">
+    <span class="h-10 w-10 rounded-xl bg-laut flex items-center justify-center rotate-45"><span class="h-4 w-4 rounded-sm bg-emas"></span></span>
+    <span class="font-serif text-xl font-bold text-laut-deep">Sarung Ende</span>
+  </a>
+  <a href="index.html" class="text-sm font-bold text-laut hover:underline">← Kembali ke Beranda</a>
+</div>
+
+<!-- Kartu autentikasi -->
+<main class="flex-1 flex items-center justify-center px-4 pb-16">
+  <div class="w-full max-w-4xl bg-white rounded-3xl shadow-card overflow-hidden grid md:grid-cols-2">
+
+    <!-- Panel brand -->
+    <div class="bg-laut-deep bg-motif-terang text-ivory p-10 flex flex-col justify-center">
+      <h1 class="font-serif text-3xl font-bold leading-snug">Satu Akun untuk Seluruh Pasar Tenun</h1>
+      <ul class="mt-6 space-y-3 text-sm text-ivory/80">
+        <li><i class="fa-solid fa-bag-shopping text-emas mr-2"></i><b>Pembeli:</b> checkout lebih cepat & riwayat pesanan.</li>
+        <li><i class="fa-solid fa-store text-emas mr-2"></i><b>Penjual:</b> dasbor produk, pesanan, saldo, & pengiriman.</li>
+        <li><i class="fa-solid fa-shield-halved text-emas mr-2"></i>Sesi tersimpan aman di perangkat Anda.</li>
+      </ul>
+      <p class="mt-8 text-[11px] text-ivory/50">Autentikasi penuh via Firebase Auth aktif pada Tahap 9.</p>
+    </div>
+
+    <!-- Panel form -->
+    <div class="p-8 md:p-10">
+      <!-- Tab Masuk / Daftar -->
+      <div class="flex gap-2 mb-8">
+        <button data-mode="masuk"  class="tab-auth rounded-full px-6 py-2.5 text-sm font-bold bg-laut text-ivory" onclick="gantiMode('masuk')">Masuk</button>
+        <button data-mode="daftar" class="tab-auth rounded-full px-6 py-2.5 text-sm font-bold bg-cocoa/10 text-cocoa" onclick="gantiMode('daftar')">Daftar</button>
+      </div>
+
+      <!-- FORM MASUK -->
+      <form id="form-masuk" onsubmit="submitMasuk(event)" class="space-y-4">
+        <div>
+          <label class="text-xs font-bold uppercase tracking-wider text-cocoa/60">Email</label>
+          <input id="m-email" type="email" required placeholder="nama@email.com"
+                 class="mt-1 w-full rounded-xl border border-cocoa/15 bg-white px-4 py-3 text-sm outline-none focus:border-emas">
+        </div>
+        <div>
+          <label class="text-xs font-bold uppercase tracking-wider text-cocoa/60">Kata Sandi</label>
+          <input id="m-pass" type="password" required placeholder="••••••••"
+                 class="mt-1 w-full rounded-xl border border-cocoa/15 bg-white px-4 py-3 text-sm outline-none focus:border-emas">
+        </div>
+        <button class="w-full rounded-full bg-laut text-ivory font-bold py-3.5 hover:bg-laut-dark transition shadow-card">Masuk</button>
+        <p class="text-xs text-cocoa/55 text-center">Belum punya akun?
+          <button type="button" onclick="gantiMode('daftar')" class="font-bold text-mengkudu hover:underline">Daftar di sini</button></p>
+      </form>
+
+      <!-- FORM DAFTAR -->
+      <form id="form-daftar" onsubmit="submitDaftar(event)" class="space-y-4 hidden">
+        <div>
+          <label class="text-xs font-bold uppercase tracking-wider text-cocoa/60">Daftar sebagai</label>
+          <div class="flex gap-2 mt-1">
+            <button type="button" onclick="pilihPeran('pembeli', this)" class="peran-chip chip chip-active flex-1 rounded-xl border border-cocoa/15 bg-white px-4 py-3 text-sm font-bold">
+              <i class="fa-solid fa-bag-shopping mr-1 text-emas"></i> Pembeli
+            </button>
+            <button type="button" onclick="pilihPeran('penjual', this)" class="peran-chip chip flex-1 rounded-xl border border-cocoa/15 bg-white px-4 py-3 text-sm font-bold">
+              <i class="fa-solid fa-store mr-1 text-emas"></i> Penjual
+            </button>
+          </div>
+        </div>
+        <div>
+          <label class="text-xs font-bold uppercase tracking-wider text-cocoa/60">Nama Lengkap</label>
+          <input id="d-nama" type="text" required placeholder="Nama Anda"
+                 class="mt-1 w-full rounded-xl border border-cocoa/15 bg-white px-4 py-3 text-sm outline-none focus:border-emas">
+        </div>
+        <div>
+          <label class="text-xs font-bold uppercase tracking-wider text-cocoa/60">Email</label>
+          <input id="d-email" type="email" required placeholder="nama@email.com"
+                 class="mt-1 w-full rounded-xl border border-cocoa/15 bg-white px-4 py-3 text-sm outline-none focus:border-emas">
+        </div>
+        <div>
+          <label class="text-xs font-bold uppercase tracking-wider text-cocoa/60">Kata Sandi (min. 6 karakter)</label>
+          <input id="d-pass" type="password" required placeholder="••••••••"
+                 class="mt-1 w-full rounded-xl border border-cocoa/15 bg-white px-4 py-3 text-sm outline-none focus:border-emas">
+        </div>
+        <button class="w-full rounded-full bg-emas text-white font-bold py-3.5 hover:bg-emas-dark transition shadow-card">Daftar Sekarang</button>
+      </form>
+
+      <!-- Akun demo -->
+      <div class="mt-8 text-[11px] text-cocoa/50">
+        <p class="font-bold uppercase tracking-wider mb-2">Coba cepat dengan akun demo</p>
+        <div class="flex flex-wrap gap-2">
+          <button onclick="isiDemo('penjual')" class="border border-cocoa/15 rounded-full px-3 py-1.5 hover:border-emas transition">
+            <i class="fa-solid fa-store text-emas mr-1"></i>Penjual: demo@penjual.id / penjual123
+          </button>
+          <button onclick="isiDemo('pembeli')" class="border border-cocoa/15 rounded-full px-3 py-1.5 hover:border-emas transition">
+            <i class="fa-solid fa-user text-emas mr-1"></i>Pembeli: demo@pembeli.id / pembeli123
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/login.js"></script>
+</body>
+</html>

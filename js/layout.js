@@ -24,6 +24,7 @@
     }
     }
 
-  /* Perbarui badge keranjang setelah header termuat */
+    /* Perbarui badge keranjang & area akun setelah header termuat */
   if (typeof updateBadge === 'function') updateBadge();
+  if (typeof renderAuthHeader === 'function') renderAuthHeader();
 })();
