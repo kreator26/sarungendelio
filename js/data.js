@@ -3,7 +3,12 @@
    [TAHAP 9] Array PRODUCTS diganti query Firestore:
              db.collection('products')
 ================================================================ */
-
+/* ── Konfigurasi toko ── */
+const WA_NUMBER  = '6281338607300'; // Admin Utama  (0813-3860-7300)
+const WA_NUMBER2 = '6285182110144'; // Admin Cadangan / CS (0851-8211-0144)
+/* Tips: untuk menjadikan nomor cadangan sebagai utama,
+   cukup tukar kedua nilai di atas. */
+   
 const LABEL_KAT = {
   sarung:    'Sarung Tenun',
   kain:      'Kain Ikat',

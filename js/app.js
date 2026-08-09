@@ -1,17 +1,7 @@
 /* ════════════════════════════════════════════════════════════
    SARUNG ENDE — Logika global & homepage
-   Data produk & kartu kini di js/data.js (dipakai semua halaman)
+   Keranjang belanja kini di js/keranjang.js (Tahap 4)
 ================================================================ */
-
-/* ── Keranjang sederhana (disempurnakan di Tahap 4) ── */
-let cartCount = 0;
-function addToCart(id, jumlah = 1) {
-  cartCount += jumlah;
-  const badge = document.getElementById('cart-count');
-  if (badge) badge.textContent = cartCount;
-  const p = PRODUCTS.find(x => x.id === id);
-  showToast('✓ ' + p.nama + ' masuk keranjang');
-}
 
 /* ── Notifikasi toast ── */
 let toastTimer;
@@ -28,7 +18,7 @@ function showToast(msg) {
   }, 2300);
 }
 
-/* ── [TAHAP 3] Halaman detail produk ── */
+/* ── Halaman detail produk (Tahap 3) ── */
 function openDetail(id) {
   location.href = 'detail.html?id=' + id;
 }

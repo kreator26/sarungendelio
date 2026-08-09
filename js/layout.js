@@ -22,5 +22,8 @@
         '⚠️ Header/footer tidak termuat. Buka proyek ini lewat Live Server (VS Code) ' +
         'atau hosting — bukan langsung dari file://</div>';
     }
-  }
+    }
+
+  /* Perbarui badge keranjang setelah header termuat */
+  if (typeof updateBadge === 'function') updateBadge();
 })();
