@@ -19,10 +19,9 @@
       </span>
     </a>
 
-    <!-- Pencarian — [TAHAP 2] akan mencari isi katalog Firestore -->
-    <form onsubmit="event.preventDefault(); showToast('🔍 Pencarian katalog tersedia di Tahap 2')"
-          class="hidden md:flex flex-1 max-w-xl mx-auto">
-      <input type="text" placeholder="Cari sarung, motif naga, kain ikat, selendang…"
+    <!-- Pencarian NYATA — menuju katalog.html?q=… ([TAHAP 9] ke Firestore) -->
+    <form action="katalog.html" method="GET" class="hidden md:flex flex-1 max-w-xl mx-auto">
+      <input type="text" name="q" placeholder="Cari sarung, motif naga, kain ikat, selendang…"
              class="flex-1 rounded-l-full border border-cocoa/15 bg-white px-5 py-2.5 text-sm outline-none focus:border-emas">
       <button class="rounded-r-full bg-laut px-5 text-ivory hover:bg-laut-dark transition"><i class="fa-solid fa-magnifying-glass"></i></button>
     </form>
@@ -41,14 +40,14 @@
     </div>
   </div>
 
-  <!-- Navigasi kategori — [TAHAP 2] tautan ke halaman katalog per kategori -->
+  <!-- Navigasi — kini menuju katalog dengan filter kategori -->
   <nav class="max-w-7xl mx-auto px-4 pb-3 flex gap-6 overflow-x-auto text-[13px] font-bold text-cocoa/70">
-    <a href="index.html#beranda"   class="hover:text-mengkudu whitespace-nowrap">Beranda</a>
-    <a href="index.html#katalog"   class="hover:text-mengkudu whitespace-nowrap">Katalog</a>
-    <a href="index.html#kategori"  class="hover:text-mengkudu whitespace-nowrap">Sarung Tenun</a>
-    <a href="index.html#kategori"  class="hover:text-mengkudu whitespace-nowrap">Kain Ikat</a>
-    <a href="index.html#kategori"  class="hover:text-mengkudu whitespace-nowrap">Selendang & Lawe</a>
-    <a href="index.html#kategori"  class="hover:text-mengkudu whitespace-nowrap">Kemeja Tenun</a>
-    <a href="index.html#pengrajin" class="hover:text-mengkudu whitespace-nowrap">Cerita Pengrajin</a>
+    <a href="index.html"                class="hover:text-mengkudu whitespace-nowrap">Beranda</a>
+    <a href="katalog.html"              class="hover:text-mengkudu whitespace-nowrap">Katalog</a>
+    <a href="katalog.html?kat=sarung"    class="hover:text-mengkudu whitespace-nowrap">Sarung Tenun</a>
+    <a href="katalog.html?kat=kain"      class="hover:text-mengkudu whitespace-nowrap">Kain Ikat</a>
+    <a href="katalog.html?kat=selendang" class="hover:text-mengkudu whitespace-nowrap">Selendang & Lawe</a>
+    <a href="katalog.html?kat=kemeja"    class="hover:text-mengkudu whitespace-nowrap">Kemeja Tenun</a>
+    <a href="index.html#pengrajin"       class="hover:text-mengkudu whitespace-nowrap">Cerita Pengrajin</a>
   </nav>
 </header>
