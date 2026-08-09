@@ -5,8 +5,8 @@
 
 /* ── Keranjang sederhana (disempurnakan di Tahap 4) ── */
 let cartCount = 0;
-function addToCart(id) {
-  cartCount++;
+function addToCart(id, jumlah = 1) {
+  cartCount += jumlah;
   const badge = document.getElementById('cart-count');
   if (badge) badge.textContent = cartCount;
   const p = PRODUCTS.find(x => x.id === id);
@@ -30,7 +30,7 @@ function showToast(msg) {
 
 /* ── [TAHAP 3] Halaman detail produk ── */
 function openDetail(id) {
-  showToast('📄 Halaman detail produk — Tahap 3');
+  location.href = 'detail.html?id=' + id;
 }
 
 /* ── Homepage: katalog unggulan ── */
