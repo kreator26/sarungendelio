@@ -1,0 +1,54 @@
+<!-- ═══════════ BAR PENGUMUMAN ═══════════ -->
+<div class="bg-mengkudu text-ivory text-center text-xs font-semibold py-2 px-4 tracking-wide">
+  <i class="fa-solid fa-hands-holding-child mr-1 text-emas-light"></i>
+  Ditenun tangan oleh pengrajin Ende–Lio, Flores · Pewarna alam · Dikirim ke seluruh Indonesia
+</div>
+
+<!-- ═══════════ HEADER / MARKETPLACE BAR ═══════════ -->
+<header class="sticky top-0 z-50 bg-ivory/95 backdrop-blur border-b border-cocoa/10">
+  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-4">
+
+    <!-- Logo -->
+    <a href="index.html" class="flex items-center gap-3 shrink-0">
+      <span class="h-10 w-10 rounded-xl bg-laut flex items-center justify-center rotate-45">
+        <span class="h-4 w-4 rounded-sm bg-emas"></span>
+      </span>
+      <span class="leading-tight">
+        <span class="block font-serif text-xl font-bold text-laut-deep">Sarung Ende</span>
+        <span class="block text-[10px] font-extrabold tracking-[0.22em] text-emas-dark uppercase">Pasar Tenun Ende–Lio</span>
+      </span>
+    </a>
+
+    <!-- Pencarian — [TAHAP 2] akan mencari isi katalog Firestore -->
+    <form onsubmit="event.preventDefault(); showToast('🔍 Pencarian katalog tersedia di Tahap 2')"
+          class="hidden md:flex flex-1 max-w-xl mx-auto">
+      <input type="text" placeholder="Cari sarung, motif naga, kain ikat, selendang…"
+             class="flex-1 rounded-l-full border border-cocoa/15 bg-white px-5 py-2.5 text-sm outline-none focus:border-emas">
+      <button class="rounded-r-full bg-laut px-5 text-ivory hover:bg-laut-dark transition"><i class="fa-solid fa-magnifying-glass"></i></button>
+    </form>
+
+    <!-- Aksi akun — [TAHAP 5] login pembeli & penjual (Firebase Auth) -->
+    <div class="flex items-center gap-2 ml-auto">
+      <button onclick="showToast('🛒 Keranjang: ' + cartCount + ' barang — fitur penuh di Tahap 4')"
+              class="relative h-10 w-10 rounded-full border border-cocoa/15 bg-white hover:border-emas transition" title="Keranjang">
+        <i class="fa-solid fa-cart-shopping text-laut"></i>
+        <span id="cart-count" class="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-mengkudu text-ivory text-[11px] font-bold flex items-center justify-center">0</span>
+      </button>
+      <button onclick="showToast('🔐 Login pembeli & penjual — Tahap 5')"
+              class="hidden sm:block text-sm font-bold border-2 border-laut text-laut rounded-full px-4 py-2 hover:bg-laut hover:text-ivory transition">Masuk</button>
+      <button onclick="document.getElementById('penjual')?.scrollIntoView()"
+              class="text-sm font-bold bg-emas text-white rounded-full px-4 py-2 hover:bg-emas-dark transition">Jadi Penjual</button>
+    </div>
+  </div>
+
+  <!-- Navigasi kategori — [TAHAP 2] tautan ke halaman katalog per kategori -->
+  <nav class="max-w-7xl mx-auto px-4 pb-3 flex gap-6 overflow-x-auto text-[13px] font-bold text-cocoa/70">
+    <a href="index.html#beranda"   class="hover:text-mengkudu whitespace-nowrap">Beranda</a>
+    <a href="index.html#katalog"   class="hover:text-mengkudu whitespace-nowrap">Katalog</a>
+    <a href="index.html#kategori"  class="hover:text-mengkudu whitespace-nowrap">Sarung Tenun</a>
+    <a href="index.html#kategori"  class="hover:text-mengkudu whitespace-nowrap">Kain Ikat</a>
+    <a href="index.html#kategori"  class="hover:text-mengkudu whitespace-nowrap">Selendang & Lawe</a>
+    <a href="index.html#kategori"  class="hover:text-mengkudu whitespace-nowrap">Kemeja Tenun</a>
+    <a href="index.html#pengrajin" class="hover:text-mengkudu whitespace-nowrap">Cerita Pengrajin</a>
+  </nav>
+</header>
