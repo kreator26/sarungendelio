@@ -1,0 +1,41 @@
+/* ════════════════════════════════════════════════════════════
+   SARUNG ENDE — Styling custom & motif Ende–Lio
+   (Utility layout tetap memakai Tailwind; file ini khusus
+    elemen visual khas yang tidak ada di Tailwind)
+================================================================ */
+
+html { scroll-behavior: smooth; }
+
+::selection { background: #C08A2D; color: #F7F3EB; }
+
+/* ── Pola ikat "mata manuk" (belah ketupat) untuk latar gelap ── */
+.bg-motif-terang {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23E7C883' stroke-opacity='0.13'%3E%3Cpath d='M32 8 L56 32 L32 56 L8 32 Z'/%3E%3Cpath d='M32 20 L44 32 L32 44 L20 32 Z'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='2' fill='%23E7C883' fill-opacity='0.18'/%3E%3C/svg%3E");
+}
+
+/* ── Pola yang sama, versi halus untuk latar terang ── */
+.bg-motif-gelap {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%233B241A' stroke-opacity='0.05'%3E%3Cpath d='M32 8 L56 32 L32 56 L8 32 Z'/%3E%3Cpath d='M32 20 L44 32 L32 44 L20 32 Z'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* ── Garis pemisah bermotif tenun (marun–emas–indigo) ── */
+.tenun-line {
+  height: 6px;
+  background: repeating-linear-gradient(
+    90deg,
+    #8C2F26 0 14px,
+    #C08A2D 14px 20px,
+    #24466B 20px 34px,
+    #E7C883 34px 40px
+  );
+}
+
+/* ── Animasi notifikasi toast ── */
+#toast { transition: all .3s ease; }
+
+/* ── Status aktif untuk chip filter katalog ── */
+.chip-active {
+  background: #24466B !important;
+  color: #F7F3EB !important;
+  border-color: #24466B !important;
+}
