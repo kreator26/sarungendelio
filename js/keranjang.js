@@ -103,15 +103,52 @@ function checkoutWA() {
   const items = isiCart();
   if (!items.length) { showToast('🛒 Keranjang masih kosong'); return; }
 
+  /* ── [TAHAP 8] Catat pesanan baru di localStorage ── */
+  const ORDERS_KEY = 'sarung-ende-orders';
+  let orders = [];
+  try { orders = JSON.parse(localStorage.getItem(ORDERS_KEY)) || []; } catch(e) {}
+
+  const namaPembeli = prompt('Sebelum membuka WhatsApp, masukkan nama Anda:') || 'Pembeli';
+  const hpPembeli   = prompt('Masukkan nomor HP Anda (aktif):') || '';
+  const alamat      = prompt('Masukkan alamat pengiriman lengkap:') || '';
+
+  if (!hpPembeli || !alamat) { showToast('⚠️ Data pembeli diperlukan untuk membuat pesanan.'); return; }
+
+  const newId = 'INV-' + (1000 + orders.length + 1);
+  orders.push({
+    id: newId,
+    tanggal: new Date().toISOString(),
+    pembeli: { nama: namaPembeli, hp: hpPembeli, alamat: alamat },
+    items: items.map(x => ({ produkId:x.produk.id, nama:x.produk.nama, qty:x.qty, harga:x.produk.harga })),
+    total: totalCart(),
+    status: 'menunggu',
+    resi: '',
+    catatan: ''
+  });
+  localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
+
+  /* ── Buka WhatsApp dengan pesan sudah terisi ── */
   const lines = items.map((x, i) =>
-    (i + 1) + '. ' + x.produk.nama + ' — ' + x.qty + ' pcs × ' +
-    formatRupiah(x.produk.harga) + ' = ' + formatRupiah(x.produk.harga * x.qty)).join('\n');
+    (i+1) + '. ' + x.produk.nama + ' — ' + x.qty + ' pcs × ' +
+    formatRupiah(x.produk.harga) + ' = ' + formatRupiah(x.produk.harga*x.qty)).join('\n');
 
   const msg = encodeURIComponent(
-    'Halo Admin Sarung Ende! Saya ingin memesan:\n' + lines +
-    '\n\nTotal: ' + formatRupiah(totalCart()) +
+    'Halo Admin Sarung Ende! Saya ingin memesan:\n\n' +
+    '🆔 Invoice: ' + newId + '\n' +
+    '👤 Nama: ' + namaPembeli + '\n' +
+    '📱 HP: ' + hpPembeli + '\n' +
+    '📍 Alamat: ' + alamat + '\n\n' +
+    '📦 Item:\n' + lines +
+    '\n\n💰 Total: ' + formatRupiah(totalCart()) +
     '\nMohon info ongkir & metode pembayaran (transfer/QRIS). Terima kasih 🙏');
   window.open('https://wa.me/' + WA_NUMBER + '?text=' + msg, '_blank');
+
+  /* Kosongkan keranjang */
+  cart = [];
+  localStorage.removeItem(CART_KEY);
+  updateBadge();
+  showToast('✅ Pesanan ' + newId + ' tercatat. Silakan lanjutkan di WhatsApp.');
+  setTimeout(() => { if (location.pathname.includes('keranjang')) renderCartPage(); }, 600);
 }
 
 /* ── Inisialisasi ── */
