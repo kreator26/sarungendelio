@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kelola Produk — Sarung Ende</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="js/tailwind-config.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-sand/30 font-sans text-cocoa min-h-screen">
+
+<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 translate-y-4 opacity-0 z-[70] bg-laut-deep text-ivory text-sm font-bold px-6 py-3 rounded-full shadow-card pointer-events-none"></div>
+
+<main class="max-w-3xl mx-auto px-4 py-10">
+  <a href="dashboard.html" class="text-sm font-bold text-laut hover:underline mb-6 inline-block"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Dashboard</a>
+  
+  <div class="bg-white rounded-2xl shadow-card p-8">
+    <h1 id="form-title" class="font-serif text-2xl font-bold text-laut-deep mb-6">Tambah Produk Baru</h1>
+    
+    <form onsubmit="submitProduk(event)" class="space-y-5">
+      <!-- Upload Gambar -->
+      <div>
+        <label class="text-xs font-bold uppercase tracking-wider text-cocoa/60">Foto Produk</label>
+        <div class="mt-2 flex items-center gap-4">
+          <img id="preview-img" src="" class="hidden h-24 w-24 rounded-xl object-cover border-2 border-emas">
+          <label class="cursor-pointer bg-laut/10 text-laut font-bold px-4 py-2 rounded-lg hover:bg-laut/20 transition text-sm">
+            <i class="fa-solid fa-upload mr-1"></i> Pilih Foto
+            <input id="input-file" type="file" accept="image/*" class="hidden">
+          </label>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-5">
+        <div>
+          <label class="text-xs font-bold uppercase tracking-wider text-cocoa/60">Nama Produk</label>
+          <input id="p-nama" type="text" required placeholder="cth: Sarung Tenun Naga Emas" class="mt-1 w-full rounded-xl border border-cocoa/15 bg-white px-4 py-3 text-sm outline-none focus:border-emas">
+        </div>
+        <div>
+          <label class="text-xs font-bold uppercase tracking-wider text-cocoa/60">Harga (Rp)</label>
+          <input id="p-harga" type="number" required min="1000" placeholder="350000" class="mt-1 w-full rounded-xl border border-cocoa/15 bg-white px-4 py-3 text-sm outline-none focus:border-emas">
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-5">
+        <div>
+          <label class="text-xs font-bold uppercase tracking-wider text-cocoa/60">Kategori</label>
+          <select id="p-kat" class="mt-1 w-full rounded-xl border border-cocoa/15 bg-white px-4 py-3 text-sm outline-none focus:border-emas">
+            <option value="sarung">Sarung Tenun</option>
+            <option value="kain">Kain Ikat</option>
+            <option value="selendang">Selendang & Lawe</option>
+            <option value="kemeja">Kemeja Tenun</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs font-bold uppercase tracking-wider text-cocoa/60">Motif</label>
+          <select id="p-motif" class="mt-1 w-full rounded-xl border border-cocoa/15 bg-white px-4 py-3 text-sm outline-none focus:border-emas">
+            <option value="naga">Motif Naga</option>
+            <option value="kuda">Motif Kuda (Ndara)</option>
+            <option value="mata-manuk">Motif Mata Manuk</option>
+            <option value="wela">Motif Bunga (Wela)</option>
+            <option value="kupu">Motif Kupu-Kupu</option>
+            <option value="geometris">Motif Geometris Lio</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="text-xs font-bold uppercase tracking-wider text-cocoa/60">Badge / Label (Opsional)</label>
+        <input id="p-badge" type="text" placeholder="cth: Best Seller, Premium, Baru" class="mt-1 w-full rounded-xl border border-cocoa/15 bg-white px-4 py-3 text-sm outline-none focus:border-emas">
+      </div>
+
+      <div class="flex gap-3 pt-4">
+        <button type="submit" class="flex-1 bg-emas text-white font-bold py-3.5 rounded-full hover:bg-emas-dark transition shadow-card">
+          <i class="fa-solid fa-save mr-2"></i> Simpan Produk
+        </button>
+      </div>
+    </form>
+  </div>
+</main>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/tambah-produk.js"></script>
+</body>
+</html>

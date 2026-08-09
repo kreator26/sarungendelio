@@ -61,7 +61,7 @@
       <h1 class="font-serif text-3xl font-bold text-laut-deep">Dashboard Penjual</h1>
       <p class="text-sm text-cocoa/60">Selamat datang kembali! Berikut kinerja toko Anda hari ini.</p>
     </div>
-    <button onclick="showToast('➕ Tambah Produk — Tahap 7')" class="bg-laut text-ivory font-bold px-5 py-2.5 rounded-full hover:bg-laut-dark transition shadow-card text-sm">
+    <button onclick="location.href='tambah-produk.html'" class="bg-laut text-ivory font-bold px-5 py-2.5 rounded-full hover:bg-laut-dark transition shadow-card text-sm">
       <i class="fa-solid fa-plus mr-2"></i> Tambah Produk Baru
     </button>
   </div>
@@ -135,6 +135,26 @@
       <ul class="space-y-4 text-sm" id="list-pesanan">
         <!-- Diisi oleh JS -->
       </ul>
+    </div>
+  </div>
+    <!-- Daftar Produk -->
+  <div class="bg-white p-6 rounded-2xl shadow-card mt-6">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="font-bold text-lg">Daftar Produk Saya</h3>
+      <a href="tambah-produk.html" class="text-xs font-bold text-laut hover:underline">+ Tambah Baru</a>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm text-left">
+        <thead class="text-xs text-cocoa/60 uppercase bg-sand/50">
+          <tr>
+            <th class="px-4 py-3">Produk</th>
+            <th class="px-4 py-3">Kategori</th>
+            <th class="px-4 py-3">Harga</th>
+            <th class="px-4 py-3 text-right">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tabel-produk" class="divide-y divide-cocoa/5"></tbody>
+      </table>
     </div>
   </div>
 

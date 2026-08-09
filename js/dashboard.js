@@ -41,3 +41,36 @@ function renderPesanan() {
 }
 
 renderPesanan();
+/* ── Render Tabel Produk & Aksi Hapus ── */
+function renderTabelProduk() {
+  const tbody = document.getElementById('tabel-produk');
+  if (!tbody) return;
+  
+  tbody.innerHTML = PRODUCTS.map(p => `
+    <tr class="hover:bg-sand/20 transition">
+      <td class="px-4 py-3 flex items-center gap-3">
+        <img src="${p.img}" class="h-10 w-10 rounded-lg object-cover">
+        <div>
+          <p class="font-bold text-sm">${p.nama}</p>
+          <p class="text-xs text-cocoa/50">${MOTIFS[p.motifKey]}</p>
+        </div>
+      </td>
+      <td class="px-4 py-3 text-xs">${LABEL_KAT[p.kat]}</td>
+      <td class="px-4 py-3 font-bold text-laut-dark">${formatRupiah(p.harga)}</td>
+      <td class="px-4 py-3 text-right space-x-3">
+        <a href="tambah-produk.html?id=${p.id}" class="text-emas hover:underline font-bold text-xs"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
+        <button onclick="konfirmasiHapus(${p.id})" class="text-mengkudu hover:underline font-bold text-xs"><i class="fa-solid fa-trash"></i> Hapus</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function konfirmasiHapus(id) {
+  if (confirm('Yakin ingin menghapus produk ini dari toko?')) {
+    hapusProduk(id);
+    showToast('🗑️ Produk berhasil dihapus.');
+    renderTabelProduk();
+  }
+}
+
+renderTabelProduk();

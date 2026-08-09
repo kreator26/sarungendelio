@@ -1,31 +1,24 @@
 /* ════════════════════════════════════════════════════════════
-   SARUNG ENDE — Data bersama (dipakai semua halaman)
-   [TAHAP 9] Array PRODUCTS diganti query Firestore:
-             db.collection('products')
+   SARUNG ENDE — Data bersama & Mesin CRUD Produk (Tahap 7)
 ================================================================ */
-/* ── Konfigurasi toko ── */
-const WA_NUMBER  = '6281338607300'; // Admin Utama  (0813-3860-7300)
-const WA_NUMBER2 = '6285182110144'; // Admin Cadangan / CS (0851-8211-0144)
-/* Tips: untuk menjadikan nomor cadangan sebagai utama,
-   cukup tukar kedua nilai di atas. */
-   
+
+const WA_NUMBER  = '6281338607300'; 
+const WA_NUMBER2 = '6285182110144'; 
+
 const LABEL_KAT = {
-  sarung:    'Sarung Tenun',
-  kain:      'Kain Ikat',
-  selendang: 'Selendang & Lawe',
-  kemeja:    'Kemeja Tenun'
+  sarung: 'Sarung Tenun', kain: 'Kain Ikat',
+  selendang: 'Selendang & Lawe', kemeja: 'Kemeja Tenun'
 };
 
 const MOTIFS = {
-  'naga':       'Motif Naga',
-  'kuda':       'Motif Kuda (Ndara)',
-  'mata-manuk': 'Motif Mata Manuk',
-  'wela':       'Motif Bunga (Wela)',
-  'kupu':       'Motif Kupu-Kupu',
-  'geometris':  'Motif Geometris Lio'
+  'naga': 'Motif Naga', 'kuda': 'Motif Kuda (Ndara)',
+  'mata-manuk': 'Motif Mata Manuk', 'wela': 'Motif Bunga (Wela)',
+  'kupu': 'Motif Kupu-Kupu', 'geometris': 'Motif Geometris Lio'
 };
 
-const PRODUCTS = [
+const PRODUCTS_KEY = 'sarung-ende-products';
+
+const DEFAULT_PRODUCTS = [
   { id: 1,  nama: 'Sarung Tenun Ende Premium', motifKey: 'naga',       kat: 'sarung',    harga: 350000, rating: 4.9, terjual: 128, img: 'img/produk-lipat.jpg', badge: 'Best Seller' },
   { id: 2,  nama: 'Sarung Ikat Indigo Biru',   motifKey: 'wela',       kat: 'sarung',    harga: 275000, rating: 4.8, terjual: 96,  img: 'img/produk-biru.jpg',  badge: '' },
   { id: 3,  nama: 'Sarung Sutra Emas Marun',   motifKey: 'kupu',       kat: 'sarung',    harga: 425000, rating: 5.0, terjual: 54,  img: 'img/produk-marun.jpg', badge: 'Premium' },
@@ -40,10 +33,40 @@ const PRODUCTS = [
   { id: 12, nama: 'Kain Sutra Kupu-Kupu',      motifKey: 'kupu',       kat: 'kain',      harga: 465000, rating: 5.0, terjual: 21,  img: 'img/produk-marun.jpg', badge: 'Premium' }
 ];
 
-/* ── Utilitas ── */
+let PRODUCTS = [];
+
+function muatProducts() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(PRODUCTS_KEY));
+    PRODUCTS = (stored && stored.length > 0) ? stored : DEFAULT_PRODUCTS;
+    if (!stored) simpanProducts();
+  } catch (e) { PRODUCTS = DEFAULT_PRODUCTS; }
+}
+
+function simpanProducts() { localStorage.setItem(PRODUCTS_KEY, JSON.stringify(PRODUCTS)); }
+
+function tambahAtauEditProduk(p) {
+  const idx = PRODUCTS.findIndex(x => x.id === p.id);
+  if (idx > -1) { PRODUCTS[idx] = p; } 
+  else {
+    const maxId = PRODUCTS.reduce((max, prod) => Math.max(max, prod.id), 0);
+    p.id = maxId + 1;
+    if (!p.rating) p.rating = 5.0;
+    if (!p.terjual) p.terjual = 0;
+    PRODUCTS.push(p);
+  }
+  simpanProducts();
+}
+
+function hapusProduk(id) {
+  PRODUCTS = PRODUCTS.filter(p => p.id !== id);
+  simpanProducts();
+}
+
+muatProducts(); // Muat data saat file dibaca
+
 function formatRupiah(n) { return 'Rp ' + n.toLocaleString('id-ID'); }
 
-/* ── Template kartu produk (dipakai homepage & katalog) ── */
 function kartuProduk(p) {
   return `
   <div class="bg-white rounded-2xl shadow-card overflow-hidden group flex flex-col">
@@ -58,10 +81,7 @@ function kartuProduk(p) {
       <p class="text-xs text-cocoa/55"><i class="fa-solid fa-star text-emas"></i> ${p.rating} · ${p.terjual} terjual</p>
       <div class="mt-auto pt-4 flex items-center justify-between">
         <span class="font-extrabold text-laut-dark">${formatRupiah(p.harga)}</span>
-        <button onclick="addToCart(${p.id})" title="Tambah ke keranjang"
-                class="h-9 w-9 rounded-full bg-laut text-ivory hover:bg-mengkudu transition">
-          <i class="fa-solid fa-plus text-sm"></i>
-        </button>
+        <button onclick="addToCart(${p.id})" title="Tambah ke keranjang" class="h-9 w-9 rounded-full bg-laut text-ivory hover:bg-mengkudu transition"><i class="fa-solid fa-plus text-sm"></i></button>
       </div>
     </div>
   </div>`;
