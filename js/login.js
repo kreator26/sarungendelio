@@ -4,7 +4,7 @@
 
 const params = new URLSearchParams(location.search);
 let mode = params.get('mode') === 'daftar' ? 'daftar' : 'masuk';
-let peranTerpilih = 'pembeli';
+let peranTerpilih = params.get('peran') === 'penjual' ? 'penjual' : 'pembeli';
 
 /* ── Ganti tab Masuk / Daftar ── */
 function gantiMode(m) {
