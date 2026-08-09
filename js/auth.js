@@ -1,8 +1,10 @@
 /* ════════════════════════════════════════════════════════════
-   SARUNG ENDE — Tahap 9A: Autentikasi Firebase Asli
+   SARUNG ENDE — Tahap 9A: Autentikasi Firebase + WaitForAuth
 ================================================================ */
 
 let currentUserData = null;
+let authInitialized = false;
+let authListeners = [];
 
 /* ── Pantau Status Login Secara Realtime ── */
 auth.onAuthStateChanged(async (user) => {
@@ -22,10 +24,25 @@ auth.onAuthStateChanged(async (user) => {
   } else {
     currentUserData = null;
   }
+  
+  authInitialized = true;
+  // Jalankan semua fungsi yang sedang menunggu auth selesai
+  authListeners.forEach(cb => cb());
+  authListeners = [];
+  
   renderAuthHeader(); // Update tampilan header
 });
 
-/* ── Fungsi untuk halaman lain (dashboard, dll) ── */
+/* ── Fungsi untuk menunggu auth selesai (Anti Race-Condition) ── */
+function waitForAuth(callback) {
+  if (authInitialized) {
+    callback();
+  } else {
+    authListeners.push(callback);
+  }
+}
+
+/* ── Fungsi untuk halaman lain (dashboard, statistik, dll) ── */
 function currentUser() {
   return currentUserData;
 }
@@ -66,13 +83,16 @@ async function loginUser(email, pass) {
   }
 }
 
-/* ── Logout ─ */
+/* ── Logout ── */
 async function logout() {
   try {
     await auth.signOut();
     showToast('👋 Anda telah keluar.');
     // Jika sedang di halaman proteksi, lempar ke beranda
-    if (window.location.pathname.includes('dashboard') || window.location.pathname.includes('pesanan') || window.location.pathname.includes('tambah-produk')) {
+    if (window.location.pathname.includes('dashboard') || 
+        window.location.pathname.includes('pesanan') || 
+        window.location.pathname.includes('tambah-produk') || 
+        window.location.pathname.includes('statistik')) {
       setTimeout(() => location.href = 'index.html', 500);
     }
   } catch (error) {
