@@ -130,3 +130,16 @@ function renderAuthHeader() {
       </button>
     </div>`;
 }
+/* ── Tombol "Jadi Penjual" di header ── */
+function jadiPenjual() {
+  waitForAuth(() => {
+    const u = currentUser();
+    // Jika sudah login sebagai penjual, langsung ke dashboard
+    if (u && u.peran === 'penjual') {
+      location.href = 'dashboard.html';
+      return;
+    }
+    // Selain itu, buka halaman daftar dengan peran penjual terpilih
+    location.href = 'login.html?mode=daftar&peran=penjual';
+  });
+}
