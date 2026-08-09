@@ -1,18 +1,6 @@
 /* ════════════════════════════════════════════════════════════
-   SARUNG ENDE — Tahap 6: Logika Dashboard Penjual
+   SARUNG ENDE — Tahap 6: Logika Dashboard Penjual (Updated: WaitForAuth)
 ================================================================ */
-
-/* ── Proteksi Halaman: Hanya untuk Penjual ── */
-const user = currentUser();
-if (!user || user.peran !== 'penjual') {
-  alert('⛔ Akses Ditolak. Halaman ini khusus untuk Penjual.');
-  location.href = 'login.html?mode=masuk';
-} else {
-  // Isi data user di sidebar
-  document.getElementById('user-name').textContent = user.nama;
-  document.getElementById('user-email').textContent = user.email;
-  document.getElementById('user-avatar').textContent = user.nama.charAt(0).toUpperCase();
-}
 
 /* ── Data Pesanan Dummy (Nanti dari Firestore) ── */
 const PESANAN = [
@@ -40,7 +28,6 @@ function renderPesanan() {
   `).join('');
 }
 
-renderPesanan();
 /* ── Render Tabel Produk & Aksi Hapus ── */
 function renderTabelProduk() {
   const tbody = document.getElementById('tabel-produk');
@@ -70,7 +57,33 @@ function konfirmasiHapus(id) {
     hapusProduk(id);
     showToast('🗑️ Produk berhasil dihapus.');
     renderTabelProduk();
+    // Update stat produk dinamis
+    const statProduk = document.getElementById('stat-produk');
+    if (statProduk) statProduk.textContent = PRODUCTS.length;
   }
 }
 
-renderTabelProduk();
+/* ── Proteksi Halaman & Inisialisasi dengan WaitForAuth ── */
+waitForAuth(() => {
+  const user = currentUser();
+  
+  // Proteksi: Hanya untuk Penjual
+  if (!user || user.peran !== 'penjual') {
+    alert('⛔ Akses Ditolak. Halaman ini khusus untuk Penjual.');
+    location.href = 'login.html?mode=masuk';
+    return;
+  }
+
+  // Isi data user di sidebar
+  document.getElementById('user-name').textContent = user.nama;
+  document.getElementById('user-email').textContent = user.email;
+  document.getElementById('user-avatar').textContent = user.nama.charAt(0).toUpperCase();
+
+  // Render data dashboard setelah auth valid
+  renderPesanan();
+  renderTabelProduk();
+
+  // Update statistik produk dinamis (Card 3)
+  const statProduk = document.getElementById('stat-produk');
+  if (statProduk) statProduk.textContent = PRODUCTS.length;
+});
